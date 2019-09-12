@@ -39,6 +39,8 @@ public class LecturaArchivo
 
         File lectura = new File("imgNueva.pgm");
         File salida = new File("erosionE.pgm");
+        
+        //BufferedInputStream stream = new BufferedInputStream(new FileInputStream(lectura));
         FileInputStream f = new FileInputStream(lectura);
         FileOutputStream f2 = new FileOutputStream(salida);
         Scanner scan = new Scanner(f);
@@ -47,9 +49,9 @@ public class LecturaArchivo
         scan.nextLine();
         scan.nextLine();
 
-        f.close();
+       f.close();
 
-        //BufferedReader b = new BufferedReader(new InputStreamReader(f));
+        BufferedReader b = new BufferedReader(new InputStreamReader(f));
         f = new FileInputStream(lectura);
         DataInputStream dis = new DataInputStream(f);
         DataOutputStream dos = new DataOutputStream(f2);
@@ -60,26 +62,31 @@ public class LecturaArchivo
             do
             {
                 c = (char) (dis.readUnsignedByte());
+                System.out.println("Caracter: "+c);
             } while (c != '\n');
             lineas--;
         }
-        int[][] matriz = new int[839][346];
-        int[][] matrizR = new int[839][346];
-
-        for (int i = 0; i < 839; i++)
+        int[][] matriz = new int[1000][1000];
+        int[][] matrizR = new int[1000][1000];
+        
+        for (int i = 0; i < 346; i++)
         {
-            for (int j = 0; j < 346; j++)
+            for (int j = 0; j < 839; j++)
             {
+                
                 matriz[i][j] = dis.readUnsignedByte();
+                //System.out.println("Matriz: "+matriz[i][j]);
+                
+                
                 //System.out.print(matriz[i][j]);
             }
             //System.out.println();
         }
         //algoritmo de erosion 
-
-        for (int i = 1; i < 839 - 1; i++)
+        
+        for (int i = 1; i < 346 - 1; i++)
         {
-            for (int j = 1; j < 346 - 1; j++)
+            for (int j = 1; j < 839 - 1; j++)
             {
                 int min = 255;
                 int k[] = new int[5];
@@ -109,18 +116,18 @@ public class LecturaArchivo
             dos.writeBytes("255\n");
         
 
-        for (int i = 0; i < 839; i++)
+        for (int i = 0; i < 346; i++)
         {
-            for (int j = 0; j < 346; j++)
+            for (int j = 0; j < 839; j++)
             {
 
-                dos.writeByte(matriz[i][j]);
+                dos.writeByte(matrizR[i][j]);
                 
             }
             System.out.println();
-            dos.writeBytes("\n");
         }
 
     }
+    
 
 }
