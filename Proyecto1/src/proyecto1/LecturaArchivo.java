@@ -39,10 +39,12 @@ public class LecturaArchivo
 
         File lectura = new File("imgNueva.pgm");
         File salida = new File("erosionE.pgm");
+        File salida2 = new File("dilatacionE.pgm");
         
         //BufferedInputStream stream = new BufferedInputStream(new FileInputStream(lectura));
         FileInputStream f = new FileInputStream(lectura);
         FileOutputStream f2 = new FileOutputStream(salida);
+        FileOutputStream f3 = new FileOutputStream(salida2);
         Scanner scan = new Scanner(f);
         scan.nextLine();
         scan.nextLine();
@@ -55,6 +57,7 @@ public class LecturaArchivo
         f = new FileInputStream(lectura);
         DataInputStream dis = new DataInputStream(f);
         DataOutputStream dos = new DataOutputStream(f2);
+        DataOutputStream dos2 = new DataOutputStream(f3);
         int lineas = 4;
         while (lineas > 0)
         {
@@ -68,6 +71,7 @@ public class LecturaArchivo
         }
         int[][] matriz = new int[1000][1000];
         int[][] matrizR = new int[1000][1000];
+        int[][] matrizR2 = new int[1000][1000];
         
         for (int i = 0; i < 346; i++)
         {
@@ -122,6 +126,45 @@ public class LecturaArchivo
             {
 
                 dos.writeByte(matrizR[i][j]);
+                
+            }
+            System.out.println();
+        }
+        
+        //Algoritmo de Dilatación
+        for (int i = 1; i < 346-1; i++)
+        {
+            for (int j = 1; j < 839; j++)
+            {
+                int max=0;
+                int k[] = new int[5];
+                k[0]=matriz[i][j-1];
+                k[1]=matriz[i-1][j];
+                k[2]=matriz[i][j];
+                k[3]=matriz[i][j+1];
+                k[4]=matriz[i+1][j];
+                for (int l = 0; l < 5; l++)
+                {
+                   if(k[l]>max)
+                   {
+                       max=k[l];
+                   }
+                }
+                matrizR2[i][j]=max;
+            }
+        }
+        dos2.writeBytes("P5\n");
+            dos2.writeBytes("Creado por juan abello \n");
+            dos2.writeBytes("839 346\n");
+            dos2.writeBytes("255\n");
+        
+
+        for (int i = 0; i < 346; i++)
+        {
+            for (int j = 0; j < 839; j++)
+            {
+
+                dos2.writeByte(matrizR2[i][j]);
                 
             }
             System.out.println();
