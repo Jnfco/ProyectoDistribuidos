@@ -79,12 +79,12 @@ public class LecturaArchivo
             {
                 
                 matriz[i][j] = dis.readUnsignedByte();
-                //System.out.println("Matriz: "+matriz[i][j]);
+               
                 
                 
-                //System.out.print(matriz[i][j]);
+              
             }
-            //System.out.println();
+           
         }
         //algoritmo de erosion 
         
