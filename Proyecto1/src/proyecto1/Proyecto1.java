@@ -81,9 +81,9 @@ public class Proyecto1
 
         
         //Creamos un monitor que recibe la matriz resultado en el constructor para despues devolverla como resuelta por el hilo
-        Monitor monitor =new Monitor(1,matrizErosion,matrizDilatacion);
-        Monitor monitor2 =new Monitor(2,matrizErosion,matrizDilatacion);
-        Monitor monitor3 =new Monitor(3,matrizErosion,matrizDilatacion);
+        Monitor monitor =new Monitor(matrizErosion,matrizDilatacion);
+        Monitor monitor2 =new Monitor(matrizErosion,matrizDilatacion);
+        Monitor monitor3 =new Monitor(matrizErosion,matrizDilatacion);
         
         //Aqui se llena la matriz con los datos transformados en bytes del archivo original de 346x839
         for (int i = 0; i < 346; i++)
