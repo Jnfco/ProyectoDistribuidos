@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- *
+ *Esta clase la dejé por que es la que funciona sin hilos y deja el archivo de salida correcto, para probar el programa solo con la salida sin hilos
+ * hay que comentar en  proyecto1 todo el codigo y solo crear una instancia de esta clase Lectura archivo, ahi sale un archivo que se llama erosionBuena.pgm ese es el que toma 
+ * bien el convertidor de pgm, y puedes usarlo para comparar los bytes del archivo de salida con los que salen de los archivos con hilos, en la linea 6086 por ahi, empieza la matriz
+ * 2 asi que ahi puedes comparar entre los 2 archivos.
  * @author jnfco
  */
 public class LecturaArchivo
