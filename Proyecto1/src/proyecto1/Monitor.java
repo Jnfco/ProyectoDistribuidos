@@ -11,20 +11,40 @@ package proyecto1;
  */
 public class Monitor
 {
-    private int [][]matrizResultado;
+    private int [][]matrizResultadoErosion;
+    private int [][]matrizResultadoDilatacion;
+    int id;
 
-    public Monitor(int [][]matrizResultado)
+    
+    public Monitor(int id,int [][]matrizResultadoErosion , int [][]matrizResultadoDilatacion)
     {
-        this.matrizResultado = matrizResultado;
+        this.matrizResultadoErosion = matrizResultadoErosion;
+        this.matrizResultadoDilatacion = matrizResultadoDilatacion;
+        this.id=id;
     }
     
-    public void clonar(int [][]matrizOrigen)
+    public void clonarErosion(int [][]matrizOrigen)
     {
-        matrizResultado=matrizOrigen;
+        matrizResultadoErosion=matrizOrigen;
     }
-    public int [][] getMatrizResultado()
+    
+    public void clonarDilatacion(int[][]matrizOrigen)
     {
-        return matrizResultado;
+        matrizResultadoDilatacion=matrizOrigen;
+    }
+    
+    public int [][] getMatrizResultadoErosion()
+    {
+        return matrizResultadoErosion;
+    }
+    
+    public int [][]getMatrizResultadoDilatacion()
+    {
+        return matrizResultadoDilatacion;
+    }
+    public int getId()
+    {
+        return id;
     }
     
 }

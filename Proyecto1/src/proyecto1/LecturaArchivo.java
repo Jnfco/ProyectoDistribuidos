@@ -38,7 +38,7 @@ public class LecturaArchivo
     {
 
         File lectura = new File("imgNueva.pgm");
-        File salida = new File("erosionE.pgm");
+        File salida = new File("erosionBuena.pgm");
         File salida2 = new File("dilatacionE.pgm");
         
         //BufferedInputStream stream = new BufferedInputStream(new FileInputStream(lectura));

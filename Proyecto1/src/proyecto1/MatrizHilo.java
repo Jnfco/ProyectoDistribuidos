@@ -35,7 +35,7 @@ public class MatrizHilo implements Runnable
     {
 
         //algoritmo de erosion 
-        for (int i = filaInicio+1; i < 346 - 1; i++)
+        for (int i = filaInicio+1; i < filaFin- 1; i++)
         {
             for (int j = 1; j < 839 - 1; j++)
             {
@@ -55,15 +55,15 @@ public class MatrizHilo implements Runnable
                     }
                 }
                 matrizErosion[i][j] = min;
-                //System.out.println(matrizErosion[i][j]);
             }
         }
         //Ahora clonamos la matriz para pasarla al monitor devuelta
-       monitor.clonar(matrizErosion);
+       monitor.clonarErosion(matrizErosion);
+        
        
        
        //Algoritmo de dilatacion 
-       for (int i = filaInicio+1; i < filaInicio-1; i++)
+       for (int i = filaInicio+1; i < filaFin-1; i++)
         {
             for (int j = 1; j < 839; j++)
             {
@@ -85,6 +85,7 @@ public class MatrizHilo implements Runnable
                 
             }
         }
+       monitor.clonarDilatacion(matrizDilatacion);
 
     }
 
