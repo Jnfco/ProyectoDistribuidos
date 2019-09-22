@@ -31,6 +31,11 @@ public class Proyecto1
     /**
      * @param args the command line arguments
      */
+    
+    private static int DIM = 1000;
+    private static int ancho;
+    private static int alto;
+    
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException
     {
         
@@ -53,8 +58,13 @@ public class Proyecto1
         Scanner scan = new Scanner(f);
         scan.nextLine();
         scan.nextLine();
+        // en la siguiente línea obtenemos las dimensiones de la imagen
+        // en acho y alto
+        String[] dimensiones = scan.nextLine().split(" ");
+        ancho = Integer.parseInt(dimensiones[0]);
+        alto = Integer.parseInt(dimensiones[1]);
         scan.nextLine();
-        scan.nextLine();
+        //scan.nextLine();
 
         f.close();
 
@@ -75,9 +85,9 @@ public class Proyecto1
             } while (c != '\n');
             lineas--;
         }
-        int[][] matriz = new int[1000][1000];//Matriz que se crea para ingresar los datos del archivo original 
-        int[][] matrizErosion = new int[1000][1000];//Matriz que se crea para los datos de la matriz Erosionada
-        int[][] matrizDilatacion = new int[1000][1000];//Matriz que se cera para los datos de la matriz dilatada
+        int[][] matriz = new int[DIM][DIM];//Matriz que se crea para ingresar los datos del archivo original 
+        int[][] matrizErosion = new int[DIM][DIM];//Matriz que se crea para los datos de la matriz Erosionada
+        int[][] matrizDilatacion = new int[DIM][DIM];//Matriz que se cera para los datos de la matriz dilatada
 
         
         //Creamos un monitor que recibe la matriz resultado en el constructor para despues devolverla como resuelta por el hilo
@@ -86,9 +96,9 @@ public class Proyecto1
         Monitor monitor3 =new Monitor(matrizErosion,matrizDilatacion);
         
         //Aqui se llena la matriz con los datos transformados en bytes del archivo original de 346x839
-        for (int i = 0; i < 346; i++)
+        for (int i = 0; i < alto; i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
 
                 matriz[i][j] = dis.readUnsignedByte();
@@ -97,128 +107,155 @@ public class Proyecto1
         }
         //Para los hilos se van a tomar distintas posiciones de la matriz origen, se divide en 3 para cada una aproximadamente
         //Luego en cada hilo se procesa desde una posicion distinta la matriz origen.
-        Thread h1= new Thread(new MatrizHilo(matriz,matrizErosion,matrizDilatacion,0,117, monitor)); //hilo 1 para la primera matriz separada, se toma desde la fila 0 al 117(desde el 116 es la fila que pertenecerá despues a la otra matriz)
-        Thread h2= new Thread(new MatrizHilo(matriz,matrizErosion,matrizDilatacion,116,233, monitor2));//hilo 2 para la segunda matriz separada, se toma desde la fila 116 al 233(desde el 232 es la fila que pertenecerá despues a la otra matriz)
-        Thread h3= new Thread(new MatrizHilo(matriz,matrizErosion,matrizDilatacion,232,346, monitor3));//hilo 3 para la tercera matriz separada, se toma desde la fila 232 al 346 
+        Thread h1= new Thread(new MatrizHilo(matriz,ancho,matrizErosion,matrizDilatacion,0,((alto/3) + 1), monitor));//0-116 //hilo 1 para la primera matriz separada, se toma desde la fila 0 al 117(desde el 116 es la fila que pertenecerá despues a la otra matriz)
+        Thread h2= new Thread(new MatrizHilo(matriz,ancho,matrizErosion,matrizDilatacion,((alto/3) - 1),((2*alto/3) + 1), monitor2));//114-231//hilo 2 para la segunda matriz separada, se toma desde la fila 116 al 233(desde el 232 es la fila que pertenecerá despues a la otra matriz)
+        Thread h3= new Thread(new MatrizHilo(matriz,ancho,matrizErosion,matrizDilatacion,((2*alto/3) - 1),alto, monitor3));//229-346 //hilo 3 para la tercera matriz separada, se toma desde la fila 232 al 346 
         
         h1.start();
+        h2.start();
+        h3.start();
         
         
         matrizErosion=monitor.getMatrizResultadoErosion();// matriz para el algoritmo de erosion resultante del hilo, se obtiene desde el monitor 
         
         //El encabezado solo va en la primera porcion de la salida , lo demas deberian ser los elementos de las matrices combinadas 
-            dos.writeBytes("P5\n");
-            dos.writeBytes("Creado por juan abello \n");
-            dos.writeBytes("839 346\n");
-            dos.writeBytes("255\n");
+        dos.writeChars("P5\n");
+        dos.writeChars("# Creado por juan abello \n");
+        dos.writeChars("839 346\n");
+        dos.writeChars("255\n");
                 
             
-            //Acá se escribe en el archivo la primera parte de la matriz  resultande con la erosion, falta juntar con las otras 2
-        for (int i = 0; i < 114; i++)
+        //Acá se escribe en el archivo la primera parte de la matriz  resultande con la erosion, falta juntar con las otras 2
+        for (int i = 0; i < (alto/3); i++) // escribo el resultado de la primera matriz menos la última fila
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
-                
-                dos.writeByte(matrizErosion[i][j]);
-                
+                dos.write(matrizErosion[i][j]);
             }
-           
+        }
+        // segunda parte de la matriz (originada por el hilo h2)
+        matrizErosion=monitor2.getMatrizResultadoErosion();
+        for(int i = (alto/3); i < (2*alto/3); i++)
+        {
+            for (int j = 0; j < ancho; j++)
+            {
+                dos.write(matrizErosion[i][j]);
+            }
+        }
+        // tercera parte
+        matrizErosion=monitor3.getMatrizResultadoErosion();
+        for (int i = (2*alto/3); i < alto; i++)
+        {
+            for (int j = 0; j < ancho; j++)
+            {
+                dos.write(matrizErosion[i][j]);
+            }
         }
         
         
-         //Algoritmo de dilatacion Primera matriz
-        matrizDilatacion=monitor.getMatrizResultadoDilatacion(); //Aca se pasa la matriz de dilatacion resultante que se obtiene del hilo con el monitor, es solo la primera parte, falta combinar las otras 2
+        //Algoritmo de dilatacion Primera matriz
+        //Aca se pasa la matriz de dilatacion resultante que se obtiene 
+        //del hilo con el monitor, es solo la primera parte, falta combinar las otras 2
+        matrizDilatacion=monitor.getMatrizResultadoDilatacion(); 
         
         
-            dos2.writeBytes("P5\n");
-            dos2.writeBytes("Creado por juan abello \n");
-            dos2.writeBytes("839 346\n");
-            dos2.writeBytes("255\n");
+        dos2.writeChars("P5\n");
+        dos2.writeChars("# Creado por juan abello \n");
+        dos2.writeChars("839 346\n");
+        dos2.writeChars("255\n");
             
 
-            //Aqui solo estamos guardando los elementos de la primera de 3 partes de la matriz resultado, falta generar las otroas y combinarlas
-        for (int i = 0; i < 114; i++)
+        //Aqui solo estamos guardando los elementos de la primera de 3 partes de la matriz resultado, falta generar las otroas y combinarlas
+        for (int i = 0; i < (alto/3); i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
-                
-                dos2.writeByte(matrizDilatacion[i][j]);
-                
+                dos2.write(matrizDilatacion[i][j]);
             }
             //System.out.println();
         }
+        // segunda parte
+        matrizDilatacion=monitor2.getMatrizResultadoDilatacion(); 
+        for (int i = alto/3; i < (2*alto/3); i++)
+        {
+            for (int j = 0; j < ancho; j++)
+            {
+                dos2.write(matrizDilatacion[i][j]);
+            }
+        }
+        // tercera parte
+        matrizDilatacion=monitor3.getMatrizResultadoDilatacion(); 
+        for (int i = (2*alto/3); i < alto; i++)
+        {
+            for (int j = 0; j < ancho; j++)
+            {
+                dos2.write(matrizDilatacion[i][j]);
+            }
+        }
         
-        h1.join();
-        h2.start();
+        //h1.join();
+        //h2.start();
         //Comenzamos el hilo 2 para la segunda parte de la matriz de erosion y dilatacion
         
-        h2.join();
+        //h2.join();
         //Aca se juntará la segunda parte de la matriz con la primera en el archivo
        
-         matrizErosion=monitor2.getMatrizResultadoErosion();
-         
-          for (int i = 116; i < 231; i++)
-        {
-            for (int j = 0; j < 839; j++)
-            {
-                
-                dos.writeByte(matrizErosion[i][j]);
-                //System.out.print(matrizErosion[i][j]);
-                
-            }
-            
-           
-        }
-          //Dilatacion para juntar la guardar la segunda parte de la matriz en el archivo
-          for (int i = 116; i < 231; i++)
-        {
-            for (int j = 0; j < 839; j++)
-            {
-                
-                dos2.writeByte(matrizDilatacion[i][j]);
-                
-            }
-            //System.out.println();
-        }
+//        matrizErosion=monitor2.getMatrizResultadoErosion();
+//         
+//        for (int i = 116; i < 231; i++)
+//        {
+//            for (int j = 0; j < 839; j++)
+//            {
+//                
+//                dos.writeByte(matrizErosion[i][j]);
+//                //System.out.print(matrizErosion[i][j]);
+//                
+//            }
+//            
+//           
+//        }
+        //Dilatacion para juntar la guardar la segunda parte de la matriz en el archivo
+//        for (int i = 116; i < 231; i++)
+//        {
+//            for (int j = 0; j < 839; j++)
+//            {
+//                
+//                dos2.writeByte(matrizDilatacion[i][j]);
+//                
+//            }
+//            //System.out.println();
+//        }
           
          
           
         //Iniciamos el hilo 3 y final, para las  partes finales de las matrices de erosion y dilatacion
-        h3.start();
-         //Acá se juntara la tercera parte de la matriz  de erosion con la segunda en el archivo
+        //h3.start();
+        //Acá se juntara la tercera parte de la matriz  de erosion con la segunda en el archivo
         
-           matrizErosion=monitor3.getMatrizResultadoErosion();
-         
-          for (int i = 231; i < 346; i++)
-        {
-            for (int j = 0; j < 839; j++)
-            {
-                
-                dos.writeByte(matrizErosion[i][j]);
-                
-            }
-           
-        }
-          //Aca se junta la tercera parte de la matriz de dilatacion con la segunda en el archivo
-          for (int i = 231; i < 346; i++)
-        {
-            for (int j = 0; j < 839; j++)
-            {
-                
-                dos2.writeByte(matrizDilatacion[i][j]);
-                
-            }
-        }
+//        matrizErosion=monitor3.getMatrizResultadoErosion();
+//         
+//        for (int i = 231; i < 346; i++)
+//        {
+//            for (int j = 0; j < 839; j++)
+//            {
+//                
+//                dos.writeByte(matrizErosion[i][j]);
+//                
+//            }
+//           
+//        }
+        //Aca se junta la tercera parte de la matriz de dilatacion con la segunda en el archivo
+//        for (int i = 231; i < 346; i++)
+//        {
+//            for (int j = 0; j < 839; j++)
+//            {
+//                
+//                dos2.writeByte(matrizDilatacion[i][j]);
+//                
+//            }
+//        }
           
-         h3.join(); 
+        //h3.join(); 
           
-        
-       
-        
-        
-        
-
-        
-        
     }
 }

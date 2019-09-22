@@ -13,6 +13,7 @@ public class MatrizHilo implements Runnable
 {
 
     private int matrizOrigen[][];
+    private int anchoMatriz;
     private int matrizErosion[][];
     private int matrizDilatacion[][];
     private int filaInicio;
@@ -20,9 +21,10 @@ public class MatrizHilo implements Runnable
     private int matrizHilo[][];
     private Monitor monitor;
 
-    public MatrizHilo(int[][] matrizOrigen, int[][] matrizErosion, int[][] matrizDilatacion, int filaInicio, int filaFin, Monitor monitor)
+    public MatrizHilo(int[][] matrizOrigen, int anchoMatriz, int[][] matrizErosion, int[][] matrizDilatacion, int filaInicio, int filaFin, Monitor monitor)
     {
         this.matrizOrigen = matrizOrigen;
+        this.anchoMatriz = anchoMatriz;
         this.matrizErosion = matrizErosion;
         this.matrizDilatacion = matrizDilatacion;
         this.filaInicio = filaInicio;
@@ -37,7 +39,7 @@ public class MatrizHilo implements Runnable
         //algoritmo de erosion 
         for (int i = filaInicio+1; i < filaFin- 1; i++)
         {
-            for (int j = 1; j < 839 - 1; j++)
+            for (int j = 1; j < anchoMatriz - 1; j++)
             {
                 int min = 255;
                 int k[] = new int[5];
@@ -65,7 +67,7 @@ public class MatrizHilo implements Runnable
        //Algoritmo de dilatacion 
        for (int i = filaInicio+1; i < filaFin-1; i++)
         {
-            for (int j = 1; j < 839; j++)
+            for (int j = 1; j < anchoMatriz; j++)
             {
                 int max=0;
                 int k[] = new int[5];
