@@ -49,6 +49,7 @@ public class MatrizHilo implements Runnable
                 k[3] = matrizOrigen[i][j + 1];
                 k[4] = matrizOrigen[i + 1][j];
                 int l;
+                
                 for (l = 0; l < 5; l++)
                 {
                     if (k[l] < min)
@@ -57,6 +58,7 @@ public class MatrizHilo implements Runnable
                     }
                 }
                 matrizErosion[i][j] = min;
+                System.out.print(matrizErosion[i][j]);
             }
         }
         //Ahora clonamos la matriz para pasarla al monitor devuelta

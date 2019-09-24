@@ -85,6 +85,10 @@ public class Proyecto1
             } while (c != '\n');
             lineas--;
         }
+        
+        Secuencial s= new Secuencial (DIM,alto,ancho,original,erosion,dilatacion);
+        Paralelo p = new Paralelo(DIM,alto,ancho,original,erosion,dilatacion);
+        
         int[][] matriz = new int[DIM][DIM];//Matriz que se crea para ingresar los datos del archivo original 
         int[][] matrizErosion = new int[DIM][DIM];//Matriz que se crea para los datos de la matriz Erosionada
         int[][] matrizDilatacion = new int[DIM][DIM];//Matriz que se cera para los datos de la matriz dilatada
@@ -102,6 +106,7 @@ public class Proyecto1
             {
 
                 matriz[i][j] = dis.readUnsignedByte();
+                
             }
 
         }

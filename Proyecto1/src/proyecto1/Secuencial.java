@@ -29,21 +29,30 @@ import java.util.Scanner;
  * 2 asi que ahi puedes comparar entre los 2 archivos.
  * @author jnfco
  */
-public class LecturaArchivo
+public class Secuencial
 {
 
     private byte c, c1, c2;
     private int fila, colu, i, j, gris;
     private byte dibu[][] = new byte[1000][1000], otra[][] = new byte[1000][1000];
     private FileInputStream l;
+    private File lectura;
+    private File salida;
+    private File salida2;
+    private int alto;
+    private int ancho;
+    private int DIM;
 
-    public LecturaArchivo() throws IOException
+    public Secuencial(int DIM,int alto,int ancho,File lectura,File salida,File salida2) throws IOException
     {
 
-        File lectura = new File("imgNueva.pgm");
-        File salida = new File("erosionBuena.pgm");
-        File salida2 = new File("dilatacionE.pgm");
         
+        this.DIM=DIM;
+        this.alto=alto;
+        this.ancho=ancho;
+        this.lectura=lectura;
+        this.salida=salida;
+        this.salida2=salida2;
         //BufferedInputStream stream = new BufferedInputStream(new FileInputStream(lectura));
         FileInputStream f = new FileInputStream(lectura);
         FileOutputStream f2 = new FileOutputStream(salida);
@@ -72,13 +81,13 @@ public class LecturaArchivo
             } while (c != '\n');
             lineas--;
         }
-        int[][] matriz = new int[1000][1000];
-        int[][] matrizR = new int[1000][1000];
-        int[][] matrizR2 = new int[1000][1000];
+        int[][] matriz = new int[DIM][DIM];
+        int[][] matrizR = new int[DIM][DIM];
+        int[][] matrizR2 = new int[DIM][DIM];
         
-        for (int i = 0; i < 346; i++)
+        for (int i = 0; i < alto; i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
                 
                 matriz[i][j] = dis.readUnsignedByte();
@@ -91,9 +100,9 @@ public class LecturaArchivo
         }
         //algoritmo de erosion 
         
-        for (int i = 1; i < 346 - 1; i++)
+        for (int i = 1; i < alto - 1; i++)
         {
-            for (int j = 1; j < 839 - 1; j++)
+            for (int j = 1; j < ancho- 1; j++)
             {
                 int min = 255;
                 int k[] = new int[5];
@@ -123,9 +132,9 @@ public class LecturaArchivo
             dos.writeBytes("255\n");
         
 
-        for (int i = 0; i < 346; i++)
+        for (int i = 0; i < alto; i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
 
                 dos.writeByte(matrizR[i][j]);
@@ -135,9 +144,9 @@ public class LecturaArchivo
         }
         
         //Algoritmo de Dilatación
-        for (int i = 1; i < 346-1; i++)
+        for (int i = 1; i < alto-1; i++)
         {
-            for (int j = 1; j < 839; j++)
+            for (int j = 1; j < ancho; j++)
             {
                 int max=0;
                 int k[] = new int[5];
@@ -162,15 +171,14 @@ public class LecturaArchivo
             dos2.writeBytes("255\n");
         
 
-        for (int i = 0; i < 346; i++)
+        for (int i = 0; i < alto; i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
 
                 dos2.writeByte(matrizR2[i][j]);
                 
             }
-            System.out.println();
         }
 
     }
