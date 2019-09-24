@@ -42,19 +42,22 @@ public class Secuencial
     private int alto;
     private int ancho;
     private int DIM;
+    private String cabecera;
     private int[][] matriz;
     private int[][] matrizR;
     private int[][] matrizR2;
 
-    public Secuencial(int DIM,int alto,int ancho,int[][] matriz) throws IOException
+    public Secuencial(int DIM,int alto,int ancho,int[][] matriz, String cabecera) throws IOException
     {        
         this.DIM = DIM;
         this.alto = alto;
         this.ancho = ancho;
         this.matriz = matriz;
+        this.cabecera = cabecera;
         this.matrizR = new int[this.DIM][this.DIM];
         this.matrizR2 = new int[this.DIM][this.DIM];
         
+        System.out.println("Trabajando algoritmo secuencial...");
         
         File erosion = new File("erosionSec.pgm"); //Archivo de salida con el algoritmo de erosion
         File dilatacion = new File("dilatacionSec.pgm");//Archivo de salida con el algoritmo de dilatacion
@@ -92,11 +95,11 @@ public class Secuencial
         i = 0;
         String linea=null;
         
-        dos.writeBytes("P5\n");
-        dos.writeBytes("# Creado por juan abello \n");
-        dos.writeBytes("839 346\n");
-        dos.writeBytes("255\n");
-        
+//        dos.writeBytes("P5\n");
+//        dos.writeBytes("# Creado por juan abello \n");
+//        dos.writeBytes("839 346\n");
+
+        dos.writeBytes(cabecera);
 
         for (int i = 0; i < alto; i++)
         {
@@ -129,10 +132,7 @@ public class Secuencial
                 matrizR2[i][j]=max;
             }
         }
-        dos2.writeBytes("P5\n");
-        dos2.writeBytes("# Creado por juan abello \n");
-        dos2.writeBytes("839 346\n");
-        dos2.writeBytes("255\n");
+        dos2.writeBytes(cabecera);
         
 
         for (int i = 0; i < alto; i++)
@@ -142,5 +142,7 @@ public class Secuencial
                 dos2.writeByte(matrizR2[i][j]);   
             }
         }
+        
+        System.out.println("Algoritmo secuencial terminado.");
     }
 }

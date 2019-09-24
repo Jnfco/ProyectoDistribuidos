@@ -35,7 +35,8 @@ public class MatrizHilo implements Runnable
     @Override
     public synchronized void run()
     {
-
+        System.out.println("Trabajando hilo " + Thread.currentThread().getId()+ "...");
+        
         //algoritmo de erosion 
         for (int i = filaInicio+1; i < filaFin- 1; i++)
         {
@@ -91,6 +92,7 @@ public class MatrizHilo implements Runnable
         }
        monitor.clonarDilatacion(matrizDilatacion);
 
+        System.out.println("Hilo " + Thread.currentThread().getId() + " terminado.");
     }
 
 }

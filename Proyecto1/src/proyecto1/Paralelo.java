@@ -22,25 +22,28 @@ public class Paralelo
     private int DIM;
     private int ancho;
     private int alto;
+    private String cabecera;
     private File entrada;
     private File salidaErosion;
     private File salidaDilatacion;
     
-    public Paralelo(int DIM,int alto,int ancho, int[][] matriz) throws FileNotFoundException, IOException
+    public Paralelo(int DIM,int alto,int ancho, int[][] matriz, String cabecera) throws FileNotFoundException, IOException
     {
         
         this.DIM=DIM;
         this.ancho=ancho;
         this.alto=alto;
+        this.cabecera = cabecera;
         
-        this.hola(this.DIM, this.ancho, this.alto, matriz);
+        this.hola(this.DIM, this.ancho, this.alto, matriz, cabecera);
     }
     
     public void hola(
             int DIM, 
             int ancho, 
             int alto,
-            int[][] matriz) throws FileNotFoundException, IOException
+            int[][] matriz,
+            String cabecera) throws FileNotFoundException, IOException
     {
         
         File erosion = new File("erosionHilo.pgm"); //Archivo de salida con el algoritmo de erosion
@@ -75,10 +78,11 @@ public class Paralelo
         matrizErosion=monitor.getMatrizResultadoErosion();// matriz para el algoritmo de erosion resultante del hilo, se obtiene desde el monitor 
         
         //El encabezado solo va en la primera porcion de la salida , lo demas deberian ser los elementos de las matrices combinadas 
-        dos.writeBytes("P5\n");
-        dos.writeBytes("# Creado por juan abello \n");
-        dos.writeBytes("839 346\n");
-        dos.writeBytes("255\n");
+//        dos.writeBytes("P5\n");
+//        dos.writeBytes("# Creado por juan abello \n");
+//        dos.writeBytes("839 346\n");
+//        dos.writeBytes("255\n");
+        dos.writeBytes(cabecera);
                 
             
         //Acá se escribe en el archivo la primera parte de la matriz  resultande con la erosion, falta juntar con las otras 2
@@ -115,11 +119,12 @@ public class Paralelo
         matrizDilatacion=monitor.getMatrizResultadoDilatacion(); 
         
         
-        dos2.writeBytes("P5\n");
-        dos2.writeBytes("# Creado por juan abello \n");
-        dos2.writeBytes("839 346\n");
-        dos2.writeBytes("255\n");
-            
+//        dos2.writeBytes("P5\n");
+//        dos2.writeBytes("# Creado por juan abello \n");
+//        dos2.writeBytes("839 346\n");
+//        dos2.writeBytes("255\n");
+    
+        dos2.writeBytes(cabecera);
 
         //Aqui solo estamos guardando los elementos de la primera de 3 partes de la matriz resultado, falta generar las otroas y combinarlas
         for (int i = 0; i < (alto/3); i++)

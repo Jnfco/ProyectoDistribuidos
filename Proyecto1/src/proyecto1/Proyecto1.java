@@ -35,15 +35,18 @@ public class Proyecto1
     private static int DIM = 1000;
     private static int ancho;
     private static int alto;
+    private static int grises;
     
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException
     {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("Ingrese nombre del archivo de origen con su extensión, ejemplo: archivo.pgm (el archivo debe estar en la carpeta raíz del proyecto).");
         
+        String nombreArchivo=sc.nextLine();
         
-        //LecturaArchivo l = new LecturaArchivo();
-
+        System.out.println("En proceso....");
         
-        File original = new File("imgNueva.pgm");//Archivo original en pgm
+        File original = new File(nombreArchivo);//Archivo original en pgm
 
         //LecturaArchivo l = new LecturaArchivo();
         FileInputStream f = new FileInputStream(original); //Stream de entrada para leer  el archivo original
@@ -52,15 +55,27 @@ public class Proyecto1
         //luego se saltan 4 lineas que corresponden al encabezado del archivo, esto no se 
         //tomará en cuenta para el algoritmo asi que por eso se omiten
         Scanner scan = new Scanner(f);
-        scan.nextLine();
-        scan.nextLine();
-        // en la siguiente línea obtenemos las dimensiones de la imagen
-        // en acho y alto
-        String[] dimensiones = scan.nextLine().split(" ");
-        ancho = Integer.parseInt(dimensiones[0]);
-        alto = Integer.parseInt(dimensiones[1]);
-        scan.nextLine();
-        //scan.nextLine();
+        String[] linea = scan.nextLine().split(" ");
+        int contCabecera = 3;
+        while(linea.length < 100) // suponiendo que cualquier comentario será de menos de 100 palabras
+        {
+            if(linea[0].charAt(0) != '#' && linea.length == 2)
+            {
+                // linea que contiene las dimensiones
+                ancho = Integer.parseInt(linea[0]);
+                alto = Integer.parseInt(linea[1]);
+            }
+            if(!linea[0].equals("P5") && linea.length == 1)
+            {
+                grises = Integer.parseInt(linea[0]);
+                break;
+            }
+            if(linea[0].charAt(0) == '#')
+            {
+                contCabecera++;
+            }
+            linea = scan.nextLine().split(" ");
+        }
 
         f.close();
 
@@ -68,7 +83,7 @@ public class Proyecto1
         f = new FileInputStream(original);
         DataInputStream dis = new DataInputStream(f); // Stream de entrada para los datos del archivo original, para leer en bytes
         
-        int lineas = 4;
+        int lineas = contCabecera;
         while (lineas > 0)
         {
             char c;
@@ -80,48 +95,24 @@ public class Proyecto1
             lineas--;
         }
         
-        int[][] matriz = new int[1000][1000];
-        int[][] matrizR = new int[1000][1000];
-        int[][] matrizR2 = new int[1000][1000];
+        int[][] matriz = new int[DIM][DIM];
+        int[][] matrizR = new int[DIM][DIM];
+        int[][] matrizR2 = new int[DIM][DIM];
         
-        for (int i = 0; i < 346; i++)
+        for (int i = 0; i < alto; i++)
         {
-            for (int j = 0; j < 839; j++)
+            for (int j = 0; j < ancho; j++)
             {
                 matriz[i][j] = dis.readUnsignedByte();
             }
-        }
-        //algoritmo de erosion 
+        }        
         
-        for (int i = 1; i < 346 - 1; i++)
-        {
-            for (int j = 1; j < 839 - 1; j++)
-            {
-                int min = 255;
-                int k[] = new int[5];
-                k[0] = matriz[i][j - 1];
-                k[1] = matriz[i - 1][j];
-                k[2] = matriz[i][j];
-                k[3] = matriz[i][j + 1];
-                k[4] = matriz[i + 1][j];
-                int l;
-                for (l = 0; l < 5; l++)
-                {
-                    if (k[l] < min)
-                    {
-                        min = k[l];
-                    }
-                }
-                matrizR[i][j] = min;
-            }
-        }
-
+        String cabecera = "P5\n" + ancho + " " + alto + "\n" + grises + "\n";
+        
+        Secuencial s= new Secuencial (DIM, alto, ancho, matriz, cabecera);
+        Paralelo p = new Paralelo(DIM,alto,ancho, matriz, cabecera);
         
         
-        Secuencial s= new Secuencial (DIM, alto, ancho, matriz);
-        Paralelo p = new Paralelo(DIM,alto,ancho, matriz);
-        
-        
-          
+       
     }
 }
