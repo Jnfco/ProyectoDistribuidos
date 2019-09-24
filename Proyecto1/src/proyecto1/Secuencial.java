@@ -37,13 +37,16 @@ public class Secuencial
     private byte dibu[][] = new byte[1000][1000], otra[][] = new byte[1000][1000];
     private FileInputStream l;
     private File lectura;
-    private File salida;
-    private File salida2;
     private int alto;
     private int ancho;
     private int DIM;
+    private DataInputStream dis;
+    private int [][]matriz;
+    private int [][]matrizErosion;
+    private int [][]matrizDilatacion;
+    
 
-    public Secuencial(int DIM,int alto,int ancho,File lectura,File salida,File salida2) throws IOException
+    public Secuencial(int[][] matriz,int[][] matrizErosion,int [][] matrizDilatacion,int DIM,int alto,int ancho,File lectura,DataInputStream dis) throws IOException
     {
 
         
@@ -51,53 +54,26 @@ public class Secuencial
         this.alto=alto;
         this.ancho=ancho;
         this.lectura=lectura;
-        this.salida=salida;
-        this.salida2=salida2;
-        //BufferedInputStream stream = new BufferedInputStream(new FileInputStream(lectura));
-        FileInputStream f = new FileInputStream(lectura);
-        FileOutputStream f2 = new FileOutputStream(salida);
-        FileOutputStream f3 = new FileOutputStream(salida2);
-        Scanner scan = new Scanner(f);
-        scan.nextLine();
-        scan.nextLine();
-        scan.nextLine();
-        scan.nextLine();
-
-       f.close();
-
-        BufferedReader b = new BufferedReader(new InputStreamReader(f));
-        f = new FileInputStream(lectura);
-        DataInputStream dis = new DataInputStream(f);
-        DataOutputStream dos = new DataOutputStream(f2);
-        DataOutputStream dos2 = new DataOutputStream(f3);
-        int lineas = 4;
-        while (lineas > 0)
-        {
-            char c;
-            do
-            {
-                c = (char) (dis.readUnsignedByte());
-                System.out.println("Caracter: "+c);
-            } while (c != '\n');
-            lineas--;
-        }
-        int[][] matriz = new int[DIM][DIM];
-        int[][] matrizR = new int[DIM][DIM];
-        int[][] matrizR2 = new int[DIM][DIM];
+        this.dis=dis;
+        this.matriz=matriz;
+        this.matrizErosion=matrizErosion;
+        this.matrizDilatacion=matrizDilatacion;
         
-        for (int i = 0; i < alto; i++)
-        {
-            for (int j = 0; j < ancho; j++)
-            {
-                
-                matriz[i][j] = dis.readUnsignedByte();
-               
-                
-                
-              
-            }
-           
-        }
+        
+        
+        
+        File erosionSecuencial=new File("erosionSecuencial.pgm");
+        File dilatacionSecuencial=new File("dilatacionSecuencial.pgm");
+        
+        FileOutputStream f = new FileOutputStream(erosionSecuencial);//Stream de salida para el archivo de erosion
+        FileOutputStream f2 = new FileOutputStream(dilatacionSecuencial);//Stream de salida para el archivo de dilatacion
+        
+        DataOutputStream dos = new DataOutputStream(f);//Stream de salida para los datos del archivo de erosion en bytes
+        DataOutputStream dos2 = new DataOutputStream(f2);//Stream de salida para los datos del archivo de dilatacion en bytes 
+        
+        
+        
+       
         //algoritmo de erosion 
         
         for (int i = 1; i < alto - 1; i++)
@@ -119,17 +95,17 @@ public class Secuencial
                         min = k[l];
                     }
                 }
-                matrizR[i][j] = min;
+                matrizErosion[i][j] = min;
             }
         }
 
         i = 0;
         String linea=null;
         
-            dos.writeBytes("P5\n");
-            dos.writeBytes("Creado por juan abello \n");
-            dos.writeBytes("839 346\n");
-            dos.writeBytes("255\n");
+            dos.writeChars("P5\n");
+            dos.writeChars("Creado por juan abello \n");
+            dos.writeChars("839 346\n");
+            dos.writeChars("255\n");
         
 
         for (int i = 0; i < alto; i++)
@@ -137,7 +113,7 @@ public class Secuencial
             for (int j = 0; j < ancho; j++)
             {
 
-                dos.writeByte(matrizR[i][j]);
+                dos.write(matrizErosion[i][j]);
                 
             }
             System.out.println();
@@ -162,13 +138,13 @@ public class Secuencial
                        max=k[l];
                    }
                 }
-                matrizR2[i][j]=max;
+                matrizDilatacion[i][j]=max;
             }
         }
-        dos2.writeBytes("P5\n");
-            dos2.writeBytes("Creado por juan abello \n");
-            dos2.writeBytes("839 346\n");
-            dos2.writeBytes("255\n");
+        dos2.writeChars("P5\n");
+        dos2.writeChars("Creado por juan abello \n");
+        dos2.writeChars("839 346\n");
+        dos2.writeChars("255\n");
         
 
         for (int i = 0; i < alto; i++)
@@ -176,7 +152,7 @@ public class Secuencial
             for (int j = 0; j < ancho; j++)
             {
 
-                dos2.writeByte(matrizR2[i][j]);
+                dos2.writeByte(matrizDilatacion[i][j]);
                 
             }
         }
