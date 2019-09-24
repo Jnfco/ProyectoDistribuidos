@@ -58,7 +58,7 @@ public class MatrizHilo implements Runnable
                     }
                 }
                 matrizErosion[i][j] = min;
-                System.out.print(matrizErosion[i][j]);
+                //System.out.print(matrizErosion[i][j]);
             }
         }
         //Ahora clonamos la matriz para pasarla al monitor devuelta
