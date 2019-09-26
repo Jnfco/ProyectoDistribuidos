@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- *Esta clase la dejé por que es la que funciona sin hilos y deja el archivo de salida correcto, para probar el programa solo con la salida sin hilos
- * hay que comentar en  proyecto1 todo el codigo y solo crear una instancia de esta clase Lectura archivo, ahi sale un archivo que se llama erosionBuena.pgm ese es el que toma 
- * bien el convertidor de pgm, y puedes usarlo para comparar los bytes del archivo de salida con los que salen de los archivos con hilos, en la linea 6086 por ahi, empieza la matriz
- * 2 asi que ahi puedes comparar entre los 2 archivos.
+ * Esta clase realiza la ejecucion de los algoritmos de forma secuencial
+ *
  * @author jnfco
  */
 public class Secuencial
@@ -46,103 +44,106 @@ public class Secuencial
     private int[][] matriz;
     private int[][] matrizR;
     private int[][] matrizR2;
+    private String modo;
 
-    public Secuencial(int DIM,int alto,int ancho,int[][] matriz, String cabecera) throws IOException
-    {        
+    public Secuencial(int DIM, int alto, int ancho, int[][] matriz, String cabecera, String modo) throws IOException
+    {
         this.DIM = DIM;
         this.alto = alto;
         this.ancho = ancho;
         this.matriz = matriz;
         this.cabecera = cabecera;
-        this.matrizR = new int[this.DIM][this.DIM];
-        this.matrizR2 = new int[this.DIM][this.DIM];
-        
+        this.matrizR = new int[this.alto + 1][this.ancho + 1];
+        this.matrizR2 = new int[this.alto + 1][this.ancho + 1];
+        this.modo = modo;
+
         System.out.println("Trabajando algoritmo secuencial...");
-        
-        File erosion = new File("erosionSec.pgm"); //Archivo de salida con el algoritmo de erosion
-        File dilatacion = new File("dilatacionSec.pgm");//Archivo de salida con el algoritmo de dilatacion
 
-        FileOutputStream f2 = new FileOutputStream(erosion);//Stream de salida para el archivo de erosion
-        FileOutputStream f3 = new FileOutputStream(dilatacion);//Stream de salida para el archivo de dilatacion
-        
-        DataOutputStream dos = new DataOutputStream(f2);//Stream de salida para los datos del archivo de erosion en bytes
-        DataOutputStream dos2 = new DataOutputStream(f3);//Stream de salida para los datos del archivo de dilatacion en bytes 
-
-        //algoritmo de erosion 
-        for (int i = 1; i < alto - 1; i++)
+        if (modo.equals("Erosion"))
         {
-            for (int j = 1; j < ancho - 1; j++)
+            File erosion = new File("erosionSec.pgm"); //Archivo de salida con el algoritmo de erosion
+            FileOutputStream f2 = new FileOutputStream(erosion);//Stream de salida para el archivo de erosion
+            DataOutputStream dos = new DataOutputStream(f2);//Stream de salida para los datos del archivo de erosion en bytes
+            //algoritmo de erosion 
+            for (int i = 1; i < alto - 1; i++)
             {
-                int min = 255;
-                int k[] = new int[5];
-                k[0] = matriz[i][j - 1];
-                k[1] = matriz[i - 1][j];
-                k[2] = matriz[i][j];
-                k[3] = matriz[i][j + 1];
-                k[4] = matriz[i + 1][j];
-                int l;
-                for (l = 0; l < 5; l++)
+                for (int j = 1; j < ancho - 1; j++)
                 {
-                    if (k[l] < min)
+                    int min = 255;
+                    int k[] = new int[5];
+                    k[0] = matriz[i][j - 1];
+                    k[1] = matriz[i - 1][j];
+                    k[2] = matriz[i][j];
+                    k[3] = matriz[i][j + 1];
+                    k[4] = matriz[i + 1][j];
+                    int l;
+                    for (l = 0; l < 5; l++)
                     {
-                        min = k[l];
+                        if (k[l] < min)
+                        {
+                            min = k[l];
+                        }
                     }
+                    matrizR[i][j] = min;
                 }
-                matrizR[i][j] = min;
             }
-        }
 
-        i = 0;
-        String linea=null;
-        
+            i = 0;
+            String linea = null;
+
 //        dos.writeBytes("P5\n");
 //        dos.writeBytes("# Creado por juan abello \n");
 //        dos.writeBytes("839 346\n");
+            dos.writeBytes(cabecera);
 
-        dos.writeBytes(cabecera);
-
-        for (int i = 0; i < alto; i++)
-        {
-            for (int j = 0; j < ancho; j++)
+            for (int i = 0; i < alto; i++)
             {
-                dos.writeByte(matrizR[i][j]);   
-            }
-            //System.out.println();
-        }
-        
-        //Algoritmo de Dilatación
-        for (int i = 1; i < alto-1; i++)
-        {
-            for (int j = 1; j < ancho; j++)
-            {
-                int max=0;
-                int k[] = new int[5];
-                k[0]=matriz[i][j-1];
-                k[1]=matriz[i-1][j];
-                k[2]=matriz[i][j];
-                k[3]=matriz[i][j+1];
-                k[4]=matriz[i+1][j];
-                for (int l = 0; l < 5; l++)
+                for (int j = 0; j < ancho; j++)
                 {
-                   if(k[l]>max)
-                   {
-                       max=k[l];
-                   }
+                    dos.writeByte(matrizR[i][j]);
                 }
-                matrizR2[i][j]=max;
+                //System.out.println();
             }
         }
-        dos2.writeBytes(cabecera);
-        
-
-        for (int i = 0; i < alto; i++)
+        if (modo.equals("Dilatacion"))
         {
-            for (int j = 0; j < ancho; j++)
+            File dilatacion = new File("dilatacionSec.pgm");//Archivo de salida con el algoritmo de dilatacion
+            FileOutputStream f3 = new FileOutputStream(dilatacion);//Stream de salida para el archivo de dilatacion
+            DataOutputStream dos2 = new DataOutputStream(f3);//Stream de salida para los datos del archivo de dilatacion en bytes 
+            //Algoritmo de Dilatación
+            for (int i = 1; i < alto - 1; i++)
             {
-                dos2.writeByte(matrizR2[i][j]);   
+                for (int j = 1; j < ancho; j++)
+                {
+                    int max = 0;
+                    int k[] = new int[5];
+                    k[0] = matriz[i][j - 1];
+                    k[1] = matriz[i - 1][j];
+                    k[2] = matriz[i][j];
+                    k[3] = matriz[i][j + 1];
+                    k[4] = matriz[i + 1][j];
+                    for (int l = 0; l < 5; l++)
+                    {
+                        if (k[l] > max)
+                        {
+                            max = k[l];
+                        }
+                    }
+                    matrizR2[i][j] = max;
+                }
             }
+            dos2.writeBytes(cabecera);
+
+            for (int i = 0; i < alto; i++)
+            {
+                for (int j = 0; j < ancho; j++)
+                {
+                    dos2.writeByte(matrizR2[i][j]);
+                }
+            }
+
+            System.out.println("Algoritmo secuencial terminado.");
         }
-        
-        System.out.println("Algoritmo secuencial terminado.");
+
     }
 }

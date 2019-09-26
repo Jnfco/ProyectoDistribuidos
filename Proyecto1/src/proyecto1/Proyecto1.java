@@ -32,17 +32,51 @@ public class Proyecto1
      * @param args the command line arguments
      */
     
-    private static int DIM = 1000;
+    private static int DIM = 10000;
     private static int ancho;
     private static int alto;
     private static int grises;
+    private static String modo;
+    private static int opcion;
+    private static  boolean esParalelo;
+   
     
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException
     {
+        esParalelo=false;
         Scanner sc= new Scanner(System.in);
         System.out.println("Ingrese nombre del archivo de origen con su extensión, ejemplo: archivo.pgm (el archivo debe estar en la carpeta raíz del proyecto).");
         
         String nombreArchivo=sc.nextLine();
+        System.out.println("Escoga una de los siguientes algoritmos para la imagen:");
+        System.out.println("1) Erosión");
+        System.out.println("2) Dilatación");
+        opcion=sc.nextInt();
+        
+        
+        if(opcion == 1)
+        {
+            modo="Erosion";
+        }
+        if(opcion ==2)
+        {
+            modo="Dilatacion";
+        }
+        
+        System.out.println("Ahora escoga el metodo de resolución del algoritmo seleccionado:");
+        System.out.println("1) Secuencial");
+        System.out.println("2) Paralelo");
+        
+        opcion=sc.nextInt();
+        
+        if(opcion ==1)
+        {
+            esParalelo=false;
+        }
+        if(opcion==2)
+        {
+            esParalelo=true;
+        }
         
         System.out.println("En proceso....");
         
@@ -95,9 +129,9 @@ public class Proyecto1
             lineas--;
         }
         
-        int[][] matriz = new int[DIM][DIM];
-        int[][] matrizR = new int[DIM][DIM];
-        int[][] matrizR2 = new int[DIM][DIM];
+        int[][] matriz = new int[alto+1][ancho+1];
+        int[][] matrizR = new int[alto+1][ancho+1];
+        int[][] matrizR2 = new int[alto+1][ancho+1];
         
         for (int i = 0; i < alto; i++)
         {
@@ -108,9 +142,17 @@ public class Proyecto1
         }        
         
         String cabecera = "P5\n" + ancho + " " + alto + "\n" + grises + "\n";
+        System.out.println("Modo: "+modo);
+        if(esParalelo==true)
+        {
+            Paralelo p = new Paralelo(DIM,alto,ancho, matriz, cabecera,modo);
+        }
+        else
+        {
+            Secuencial s= new Secuencial (DIM, alto, ancho, matriz, cabecera,modo); 
+        }
+       
         
-        Secuencial s= new Secuencial (DIM, alto, ancho, matriz, cabecera);
-        Paralelo p = new Paralelo(DIM,alto,ancho, matriz, cabecera);
         
         
        
