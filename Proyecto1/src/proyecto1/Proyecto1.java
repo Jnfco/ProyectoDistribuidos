@@ -38,20 +38,59 @@ public class Proyecto1
     private static int grises;
     private static String modo;
     private static int opcion;
-    private static  boolean esParalelo;
+    private static boolean esParalelo;
+    private static int estructura;
    
     
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException
     {
         esParalelo=false;
         Scanner sc= new Scanner(System.in);
-        System.out.println("Ingrese nombre del archivo de origen con su extensión, ejemplo: archivo.pgm (el archivo debe estar en la carpeta raíz del proyecto).");
-        
+        System.out.println("Ingrese nombre del archivo de origen con su extensión, "
+                + "ejemplo: archivo.pgm (el archivo debe estar en la carpeta raíz del proyecto).");
         String nombreArchivo=sc.nextLine();
-        System.out.println("Escoga una de los siguientes algoritmos para la imagen:");
-        System.out.println("1) Erosión");
-        System.out.println("2) Dilatación");
-        opcion=sc.nextInt();
+        
+        do
+        {
+            System.out.println("Elija el metodo de resolución del algoritmo seleccionado:");
+            System.out.println("1) Secuencial");
+            System.out.println("2) Paralelo");
+            opcion=sc.nextInt();
+        } while (opcion < 1 || opcion > 2);
+        
+        
+        
+        if(opcion ==1)
+        {
+            esParalelo=false;
+            do
+            {
+                System.out.println("Seleccione el elemento estructural para la aplicación del algoritmo"
+                    + "(Consulte el enunciado para ver el orden en que están las estructuras): ");
+                System.out.println("0) Normal");
+                System.out.println("1) Estructura 1");
+                System.out.println("2) Estructura 2");
+                System.out.println("3) Estructura 3");
+                System.out.println("4) Estructura 4");
+                System.out.println("5) Estructura 6");
+            
+                estructura = sc.nextInt();
+            } while (estructura < 0 || estructura > 6);
+            
+        }
+        if(opcion==2)
+        {
+            esParalelo=true;
+        }
+        
+        
+        do
+        {
+            System.out.println("Escoga una de los siguientes algoritmos para la imagen:");
+            System.out.println("1) Erosión");
+            System.out.println("2) Dilatación");
+            opcion=sc.nextInt();
+        } while (opcion < 1 || opcion > 2);
         
         
         if(opcion == 1)
@@ -63,20 +102,6 @@ public class Proyecto1
             modo="Dilatacion";
         }
         
-        System.out.println("Ahora escoga el metodo de resolución del algoritmo seleccionado:");
-        System.out.println("1) Secuencial");
-        System.out.println("2) Paralelo");
-        
-        opcion=sc.nextInt();
-        
-        if(opcion ==1)
-        {
-            esParalelo=false;
-        }
-        if(opcion==2)
-        {
-            esParalelo=true;
-        }
         
         System.out.println("En proceso....");
         
@@ -149,12 +174,7 @@ public class Proyecto1
         }
         else
         {
-            Secuencial s= new Secuencial (DIM, alto, ancho, matriz, cabecera,modo); 
+            Secuencial s = new Secuencial (DIM, alto, ancho, matriz, cabecera, modo, estructura); 
         }
-       
-        
-        
-        
-       
     }
 }
